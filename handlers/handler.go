@@ -5,19 +5,22 @@ import (
 	"04_todo_swagger/models"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 )
 
-// @Summary Get an item by ID
-// @Description Get a single item by its ID
-// @ID get-item-by-id
+// ReadTodo godoc
+// @Summary Read a single todo
+// @Description Get a todo by ID
+// @ID read-todo
+// @Param todoId path int true "Todo ID"
 // @Produce json
-// @Param id path int true "Item ID"
-// @Success 200 {object} Item
-// @Failure 400 {object} ErrorResponse
-// @Router /items/{id} [get]
+// @Success 200 {object} Todo
+// @Failure 204 {string} string "No content"
+// @Failure 500 {string} string "Internal server error"
+// @Router /todo/{todoId} [get]
 func ReadTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
@@ -34,6 +37,14 @@ func ReadTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ReadAllTodo godoc
+// @Summary Read all todos
+// @Description Get all todos
+// @ID read-all-todo
+// @Produce json
+// @Success 200 {array} Todo
+// @Failure 204 {string} string "No content"
+// @Router /todo [get]
 func ReadAllTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	todos, err := dbHelper.FindAllTodos()
@@ -45,6 +56,16 @@ func ReadAllTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateTodo godoc
+// @Summary Create a todo
+// @Description Create a new todo
+// @ID create-todo
+// @Accept json
+// @Param userId path int true "User ID"
+// @Param todo body Todo true "Todo object"
+// @Success 200 {string} string "OK"
+// @Failure 204 {string} string "No content"
+// @Router /todo/{userId} [post]
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
@@ -60,6 +81,17 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// UpdateTodo godoc
+// @Summary Update a todo
+// @Description Update an existing todo
+// @ID update-todo
+// @Accept json
+// @Param todoId path int true "Todo ID"
+// @Param todo body Todo true "Updated todo object"
+// @Success 200 {object} Todo
+// @Failure 204 {string} string "No content"
+// @Failure 500 {string} string "Internal server error"
+// @Router /todo/{todoId} [put]
 func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
@@ -70,9 +102,9 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&todo)
 	todo2, err := dbHelper.UpdateTodoById(todo, id)
 
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
-	} else if err == sql.ErrNoRows {
+	} else if errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)
@@ -80,6 +112,14 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteTodo godoc
+// @Summary Delete a todo
+// @Description Delete an existing todo
+// @ID delete-todo
+// @Param todoId path int true "Todo ID"
+// @Success 200 {string} string "OK"
+// @Failure 204 {string} string "No content"
+// @Router /todo/{todoId} [delete]
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)

@@ -1,6 +1,6 @@
 module 04_todo_swagger
 
-go 1.19
+go 1.20
 
 require (
 	github.com/golang-migrate/migrate/v4 v4.17.1
