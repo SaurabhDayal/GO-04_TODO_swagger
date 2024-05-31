@@ -60,9 +60,9 @@ func ReadAllTask(w http.ResponseWriter, r *http.Request) {
 // @ID create-task
 // @Accept json
 // @Param task body models.Task true "Task object"
-// @Success 200 {string} string "OK"
-// @Failure 204 {string} string "No content"
-// @Router /task/{taskId} [post]
+// @Success 201 {string} string "Created"
+// @Failure 500 {string} string "Internal server error"
+// @Router /task [post]
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var task models.Task
@@ -110,14 +110,17 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 // @Param taskId path int true "Task ID"
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
+// @Failure 500 {string} string "Internal server error"
 // @Router /task/{taskId} [delete]
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id := vars["taskId"]
 	err := dbHelper.DeleteTaskById(id)
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
+	} else if errors.Is(err, sql.ErrNoRows) {
+		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)
 	}
