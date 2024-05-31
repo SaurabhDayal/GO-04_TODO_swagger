@@ -17,7 +17,7 @@ import (
 // @ID read-task
 // @Param taskId path int true "Task ID"
 // @Produce json
-// @Success 200 {object} Task
+// @Success 200 {object} models.Task
 // @Failure 204 {string} string "No content"
 // @Failure 500 {string} string "Internal server error"
 // @Router /task/{taskId} [get]
@@ -42,7 +42,7 @@ func ReadTask(w http.ResponseWriter, r *http.Request) {
 // @Description Get all tasks
 // @ID read-all-task
 // @Produce json
-// @Success 200 {array} Task
+// @Success 200 {array} models.Task
 // @Failure 204 {string} string "No content"
 // @Router /task [get]
 func ReadAllTask(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +61,7 @@ func ReadAllTask(w http.ResponseWriter, r *http.Request) {
 // @Description Create a new task
 // @ID create-task
 // @Accept json
-// @Param task body Task true "Task object"
+// @Param task body models.Task true "Task object"
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
 // @Router /task/{userId} [post]
@@ -83,8 +83,8 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 // @ID update-task
 // @Accept json
 // @Param taskId path int true "Task ID"
-// @Param task body Task true "Updated task object"
-// @Success 200 {object} Task
+// @Param task body models.Task true "Updated task object"
+// @Success 200 {object} models.Task
 // @Failure 204 {string} string "No content"
 // @Failure 500 {string} string "Internal server error"
 // @Router /task/{taskId} [put]
