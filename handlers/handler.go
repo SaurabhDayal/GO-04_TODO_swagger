@@ -10,6 +10,14 @@ import (
 	"strconv"
 )
 
+// @Summary Get an item by ID
+// @Description Get a single item by its ID
+// @ID get-item-by-id
+// @Produce json
+// @Param id path int true "Item ID"
+// @Success 200 {object} Item
+// @Failure 400 {object} ErrorResponse
+// @Router /items/{id} [get]
 func ReadTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)

@@ -5,10 +5,25 @@ import (
 	"04_todo_swagger/handlers"
 	"fmt"
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 )
 
+// @title Your Project API
+// @version 1.0
+// @description This is a sample server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api/v1
 func main() {
 
 	r := mux.NewRouter()
@@ -18,6 +33,11 @@ func main() {
 	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.ReadTodo).Methods("GET")
 	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.UpdateTodo).Methods("PUT")
 	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.DeleteTodo).Methods("DELETE")
+
+	// Serve Swagger UI
+	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), // The URL to API definition
+	))
 
 	if err := database.ConnectAndMigrate(
 		"localhost",
