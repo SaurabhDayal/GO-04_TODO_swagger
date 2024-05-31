@@ -25,9 +25,10 @@ import (
 // @host localhost:8080
 // @BasePath /api/v1
 func main() {
-
+	// Initialize the Gorilla Mux router
 	r := mux.NewRouter()
 
+	// Define routes for CRUD operations
 	r.HandleFunc("/task", handlers.CreateTask).Methods("POST")
 	r.HandleFunc("/task", handlers.ReadAllTask).Methods("GET")
 	r.HandleFunc("/task/{taskId}", handlers.ReadTask).Methods("GET")
@@ -36,9 +37,10 @@ func main() {
 
 	// Serve Swagger UI
 	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), // The URL to API definition
+		httpSwagger.URL("/swagger/doc.json"), // URL to API definition
 	))
 
+	// Initialize and migrate the database
 	if err := database.ConnectAndMigrate(
 		"localhost",
 		"5440",
@@ -50,5 +52,6 @@ func main() {
 	}
 	fmt.Println("migration successful!!")
 
+	// Start the HTTP server
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
