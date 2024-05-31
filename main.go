@@ -29,10 +29,10 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/user/{userId}/todo", handlers.CreateTodo).Methods("POST")
-	r.HandleFunc("/user/{userId}/todo", handlers.ReadAllTodo).Methods("GET")
-	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.ReadTodo).Methods("GET")
-	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.UpdateTodo).Methods("PUT")
-	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.DeleteTodo).Methods("DELETE")
+	r.HandleFunc("/user/{userId}/todo", handlers.ReadAllTask).Methods("GET")
+	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.ReadTask).Methods("GET")
+	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.UpdateTask).Methods("PUT")
+	r.HandleFunc("/user/{userId}/todo/{todoId}", handlers.DeleteTask).Methods("DELETE")
 
 	// Serve Swagger UI
 	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(

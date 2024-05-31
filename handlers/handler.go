@@ -11,25 +11,25 @@ import (
 	"strconv"
 )
 
-// ReadTodo godoc
-// @Summary Read a single todo
-// @Description Get a todo by ID
-// @ID read-todo
-// @Param todoId path int true "Todo ID"
+// ReadTask godoc
+// @Summary Read a single task
+// @Description Get a task by ID
+// @ID read-task
+// @Param todoId path int true "Task ID"
 // @Produce json
-// @Success 200 {object} Todo
+// @Success 200 {object} Task
 // @Failure 204 {string} string "No content"
 // @Failure 500 {string} string "Internal server error"
-// @Router /todo/{todoId} [get]
-func ReadTodo(w http.ResponseWriter, r *http.Request) {
+// @Router /task/{taskId} [get]
+func ReadTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	strId := vars["todoId"]
 	id, _ := strconv.Atoi(strId)
 	todo, err := dbHelper.FindTodoById(id)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
-	} else if err == sql.ErrNoRows {
+	} else if errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)
@@ -37,15 +37,15 @@ func ReadTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ReadAllTodo godoc
+// ReadAllTask godoc
 // @Summary Read all todos
 // @Description Get all todos
-// @ID read-all-todo
+// @ID read-all-task
 // @Produce json
-// @Success 200 {array} Todo
+// @Success 200 {array} Task
 // @Failure 204 {string} string "No content"
-// @Router /todo [get]
-func ReadAllTodo(w http.ResponseWriter, r *http.Request) {
+// @Router /task [get]
+func ReadAllTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	todos, err := dbHelper.FindAllTodos()
 	if err != nil {
@@ -57,15 +57,15 @@ func ReadAllTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 // CreateTodo godoc
-// @Summary Create a todo
-// @Description Create a new todo
-// @ID create-todo
+// @Summary Create a task
+// @Description Create a new task
+// @ID create-task
 // @Accept json
 // @Param userId path int true "User ID"
-// @Param todo body Todo true "Todo object"
+// @Param task body Task true "Task object"
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
-// @Router /todo/{userId} [post]
+// @Router /task/{userId} [post]
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
@@ -81,18 +81,18 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// UpdateTodo godoc
-// @Summary Update a todo
-// @Description Update an existing todo
-// @ID update-todo
+// UpdateTask godoc
+// @Summary Update a task
+// @Description Update an existing task
+// @ID update-task
 // @Accept json
-// @Param todoId path int true "Todo ID"
-// @Param todo body Todo true "Updated todo object"
-// @Success 200 {object} Todo
+// @Param todoId path int true "Task ID"
+// @Param task body Task true "Updated task object"
+// @Success 200 {object} Task
 // @Failure 204 {string} string "No content"
 // @Failure 500 {string} string "Internal server error"
-// @Router /todo/{todoId} [put]
-func UpdateTodo(w http.ResponseWriter, r *http.Request) {
+// @Router /task/{todoId} [put]
+func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	strId := vars["todoId"]
@@ -112,15 +112,15 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// DeleteTodo godoc
-// @Summary Delete a todo
-// @Description Delete an existing todo
-// @ID delete-todo
-// @Param todoId path int true "Todo ID"
+// DeleteTask godoc
+// @Summary Delete a task
+// @Description Delete an existing task
+// @ID delete-task
+// @Param todoId path int true "Task ID"
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
-// @Router /todo/{todoId} [delete]
-func DeleteTodo(w http.ResponseWriter, r *http.Request) {
+// @Router /task/{taskId} [delete]
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	strId := vars["todoId"]
