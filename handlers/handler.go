@@ -64,7 +64,7 @@ func ReadAllTask(w http.ResponseWriter, r *http.Request) {
 // @Param task body models.Task true "Task object"
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
-// @Router /task/{userId} [post]
+// @Router /task/{taskId} [post]
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var task models.Task
