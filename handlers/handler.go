@@ -14,7 +14,7 @@ import (
 // @Summary Read a single task
 // @Description Get a task by ID
 // @ID read-task
-// @Param taskId path int true "Task ID"
+// @Param taskId path string true "Task ID"
 // @Produce json
 // @Success 200 {object} models.Task
 // @Failure 204 {string} string "No content"
@@ -80,7 +80,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 // @Description Update an existing task
 // @ID update-task
 // @Accept json
-// @Param taskId path int true "Task ID"
+// @Param taskId path string true "Task ID"
 // @Param task body models.Task true "Updated task object"
 // @Success 200 {object} models.Task
 // @Failure 204 {string} string "No content"
@@ -107,7 +107,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 // @Summary Delete a task
 // @Description Delete an existing task
 // @ID delete-task
-// @Param taskId path int true "Task ID"
+// @Param taskId path string true "Task ID"
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
 // @Failure 500 {string} string "Internal server error"
