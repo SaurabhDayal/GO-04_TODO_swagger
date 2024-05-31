@@ -8,7 +8,6 @@ import (
 	"errors"
 	"github.com/gorilla/mux"
 	"net/http"
-	"strconv"
 )
 
 // ReadTask godoc
@@ -24,8 +23,7 @@ import (
 func ReadTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	strId := vars["taskId"]
-	id, _ := strconv.Atoi(strId)
+	id := vars["taskId"]
 	task, err := dbHelper.FindTasksById(id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -71,9 +69,9 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&task)
 	err := dbHelper.CreateNewTask(&task)
 	if err != nil {
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusInternalServerError)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusCreated)
 	}
 }
 
@@ -91,20 +89,17 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	strId := vars["taskId"]
-	id, _ := strconv.Atoi(strId)
-
+	id := vars["taskId"]
 	var task models.Task
 	json.NewDecoder(r.Body).Decode(&task)
-	task2, err := dbHelper.UpdateTaskById(task, id)
-
+	response, err := dbHelper.UpdateTaskById(task, id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else if errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(task2)
+		json.NewEncoder(w).Encode(response)
 	}
 }
 
@@ -119,13 +114,10 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	strId := vars["taskId"]
-	id, _ := strconv.Atoi(strId)
-
+	id := vars["taskId"]
 	err := dbHelper.DeleteTaskById(id)
-
 	if err != nil {
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		w.WriteHeader(http.StatusOK)
 	}

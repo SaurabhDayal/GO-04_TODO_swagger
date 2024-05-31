@@ -1,12 +1,13 @@
 package models
 
 import (
+	"github.com/gofrs/uuid"
 	"github.com/volatiletech/null"
 	"time"
 )
 
 type Task struct {
-	ID          string    `json:"id" db:"id"`
+	ID          uuid.UUID `json:"id" db:"id"`
 	Title       string    `json:"title" db:"title"`
 	Description string    `json:"description" db:"description"`
 	PendingAt   time.Time `json:"pendingAt" db:"pending_at"`

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func FindTasksById(id int) (models.Task, error) {
+func FindTasksById(id string) (models.Task, error) {
 	SQL := `SELECT id, 
        			   title, 
        			   description, 
@@ -58,7 +58,7 @@ func CreateNewTask(todo *models.Task) error {
 	return nil
 }
 
-func UpdateTaskById(todo models.Task, id int) (models.Task, error) {
+func UpdateTaskById(todo models.Task, id string) (models.Task, error) {
 	SQL := `UPDATE tasks 
 			SET title = $1, 
 			    description = $2, 
@@ -69,25 +69,24 @@ func UpdateTaskById(todo models.Task, id int) (models.Task, error) {
 	if err != nil {
 		return models.Task{}, err
 	}
-	SQL2 := `SELECT id, 
-       				title, 
-       				description, 
-       				pending_at, 
-       				created_at,
-       				archived_at
-			FROM tasks 
-			WHERE id = $1 
-			  AND archived_at IS NULL
+	SQL = `SELECT id, 
+       			  title, 
+       			  description, 
+       			  pending_at, 
+       		      created_at,
+       			  archived_at
+		   FROM tasks 
+		   WHERE id = $1 
+		   	 AND archived_at IS NULL
 `
-	var todo2 models.Task
-	err = database.Todo.Get(&todo2, SQL2, id)
+	err = database.Todo.Get(&todo, SQL, id)
 	if err != nil {
 		return models.Task{}, err
 	}
-	return todo2, nil
+	return todo, nil
 }
 
-func DeleteTaskById(id int) error {
+func DeleteTaskById(id string) error {
 	SQL := `UPDATE tasks 
 			SET archived_at = $1 
 			WHERE id = $2 
