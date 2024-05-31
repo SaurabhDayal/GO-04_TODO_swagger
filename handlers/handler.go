@@ -15,7 +15,7 @@ import (
 // @Summary Read a single task
 // @Description Get a task by ID
 // @ID read-task
-// @Param todoId path int true "Task ID"
+// @Param taskId path int true "Task ID"
 // @Produce json
 // @Success 200 {object} Task
 // @Failure 204 {string} string "No content"
@@ -24,9 +24,9 @@ import (
 func ReadTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	strId := vars["todoId"]
+	strId := vars["taskId"]
 	id, _ := strconv.Atoi(strId)
-	todo, err := dbHelper.FindTodoById(id)
+	todo, err := dbHelper.FindTasksById(id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else if errors.Is(err, sql.ErrNoRows) {
@@ -47,12 +47,12 @@ func ReadTask(w http.ResponseWriter, r *http.Request) {
 // @Router /task [get]
 func ReadAllTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	todos, err := dbHelper.FindAllTodos()
+	tasks, err := dbHelper.FindAllTasks()
 	if err != nil {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(todos)
+		json.NewEncoder(w).Encode(tasks)
 	}
 }
 
@@ -61,19 +61,15 @@ func ReadAllTask(w http.ResponseWriter, r *http.Request) {
 // @Description Create a new task
 // @ID create-task
 // @Accept json
-// @Param userId path int true "User ID"
 // @Param task body Task true "Task object"
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
 // @Router /task/{userId} [post]
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	vars := mux.Vars(r)
-	strId := vars["userId"]
-	id, _ := strconv.Atoi(strId)
-	var todo models.Todo
-	json.NewDecoder(r.Body).Decode(&todo)
-	err := dbHelper.CreateNewTodo(&todo, id)
+	var task models.Task
+	json.NewDecoder(r.Body).Decode(&task)
+	err := dbHelper.CreateNewTask(&task)
 	if err != nil {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
@@ -98,9 +94,9 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	strId := vars["todoId"]
 	id, _ := strconv.Atoi(strId)
 
-	var todo models.Todo
-	json.NewDecoder(r.Body).Decode(&todo)
-	todo2, err := dbHelper.UpdateTodoById(todo, id)
+	var task models.Task
+	json.NewDecoder(r.Body).Decode(&task)
+	todo2, err := dbHelper.UpdateTaskById(task, id)
 
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -123,10 +119,10 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	strId := vars["todoId"]
+	strId := vars["taskId"]
 	id, _ := strconv.Atoi(strId)
 
-	err := dbHelper.DeleteTodoById(id)
+	err := dbHelper.DeleteTaskById(id)
 
 	if err != nil {
 		w.WriteHeader(http.StatusNoContent)

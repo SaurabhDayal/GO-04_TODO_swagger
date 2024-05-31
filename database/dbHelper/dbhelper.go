@@ -6,12 +6,13 @@ import (
 	"time"
 )
 
-func FindTodoById(id int) (models.Task, error) {
+func FindTasksById(id int) (models.Task, error) {
 	SQL := `SELECT id, 
        			   title, 
        			   description, 
        			   pending_at, 
-       			   created_at 
+       			   created_at,
+       			   archived_at
 			FROM tasks 
 			WHERE id = $1 
 			  AND archived_at IS NULL
@@ -24,12 +25,13 @@ func FindTodoById(id int) (models.Task, error) {
 	return todo, nil
 }
 
-func FindAllTodos() ([]models.Task, error) {
+func FindAllTasks() ([]models.Task, error) {
 	SQL := `SELECT id, 
        			   title, 
        			   description, 
        			   pending_at, 
-       			   created_at 
+       			   created_at,
+       			   archived_at
 			FROM tasks 
 			WHERE archived_at IS NULL
 `
@@ -41,7 +43,7 @@ func FindAllTodos() ([]models.Task, error) {
 	return tasks, nil
 }
 
-func CreateNewTodo(todo *models.Task) error {
+func CreateNewTask(todo *models.Task) error {
 	SQL := `INSERT INTO tasks (
                    title, 
                    description, 
@@ -56,11 +58,11 @@ func CreateNewTodo(todo *models.Task) error {
 	return nil
 }
 
-func UpdateTodoById(todo models.Task, id int) (models.Task, error) {
+func UpdateTaskById(todo models.Task, id int) (models.Task, error) {
 	SQL := `UPDATE tasks 
 			SET title = $1, 
-			    description= $2, 
-			    pending_at= $3 
+			    description = $2, 
+			    pending_at = $3 
 			WHERE id = $4
 `
 	_, err := database.Todo.Exec(SQL, todo.Title, todo.Description, todo.PendingAt, id)
@@ -71,21 +73,26 @@ func UpdateTodoById(todo models.Task, id int) (models.Task, error) {
        				title, 
        				description, 
        				pending_at, 
-       				created_at 
+       				created_at,
+       				archived_at
 			FROM tasks 
 			WHERE id = $1 
 			  AND archived_at IS NULL
 `
 	var todo2 models.Task
-	err2 := database.Todo.Get(&todo2, SQL2, id)
-	if err2 != nil {
-		return models.Task{}, err2
+	err = database.Todo.Get(&todo2, SQL2, id)
+	if err != nil {
+		return models.Task{}, err
 	}
 	return todo2, nil
 }
 
-func DeleteTodoById(id int) error {
-	SQL := `UPDATE tasks SET archived_at =$1 WHERE id=$2 AND archived_at IS NULL`
+func DeleteTaskById(id int) error {
+	SQL := `UPDATE tasks 
+			SET archived_at = $1 
+			WHERE id = $2 
+			  AND archived_at IS NULL
+`
 	_, err := database.Todo.Exec(SQL, time.Now(), id)
 	if err != nil {
 		return err
