@@ -28,7 +28,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/task", handlers.CreateTodo).Methods("POST")
+	r.HandleFunc("/task", handlers.CreateTask).Methods("POST")
 	r.HandleFunc("/task", handlers.ReadAllTask).Methods("GET")
 	r.HandleFunc("/task/{taskId}", handlers.ReadTask).Methods("GET")
 	r.HandleFunc("/task/{taskId}", handlers.UpdateTask).Methods("PUT")

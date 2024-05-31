@@ -26,20 +26,20 @@ func ReadTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	strId := vars["taskId"]
 	id, _ := strconv.Atoi(strId)
-	todo, err := dbHelper.FindTasksById(id)
+	task, err := dbHelper.FindTasksById(id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else if errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(todo)
+		json.NewEncoder(w).Encode(task)
 	}
 }
 
 // ReadAllTask godoc
-// @Summary Read all todos
-// @Description Get all todos
+// @Summary Read all tasks
+// @Description Get all tasks
 // @ID read-all-task
 // @Produce json
 // @Success 200 {array} Task
@@ -56,7 +56,7 @@ func ReadAllTask(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// CreateTodo godoc
+// CreateTask godoc
 // @Summary Create a task
 // @Description Create a new task
 // @ID create-task
@@ -65,7 +65,7 @@ func ReadAllTask(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
 // @Router /task/{userId} [post]
-func CreateTodo(w http.ResponseWriter, r *http.Request) {
+func CreateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var task models.Task
 	json.NewDecoder(r.Body).Decode(&task)
@@ -82,21 +82,21 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 // @Description Update an existing task
 // @ID update-task
 // @Accept json
-// @Param todoId path int true "Task ID"
+// @Param taskId path int true "Task ID"
 // @Param task body Task true "Updated task object"
 // @Success 200 {object} Task
 // @Failure 204 {string} string "No content"
 // @Failure 500 {string} string "Internal server error"
-// @Router /task/{todoId} [put]
+// @Router /task/{taskId} [put]
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
-	strId := vars["todoId"]
+	strId := vars["taskId"]
 	id, _ := strconv.Atoi(strId)
 
 	var task models.Task
 	json.NewDecoder(r.Body).Decode(&task)
-	todo2, err := dbHelper.UpdateTaskById(task, id)
+	task2, err := dbHelper.UpdateTaskById(task, id)
 
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -104,7 +104,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(todo2)
+		json.NewEncoder(w).Encode(task2)
 	}
 }
 
@@ -112,7 +112,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 // @Summary Delete a task
 // @Description Delete an existing task
 // @ID delete-task
-// @Param todoId path int true "Task ID"
+// @Param taskId path int true "Task ID"
 // @Success 200 {string} string "OK"
 // @Failure 204 {string} string "No content"
 // @Router /task/{taskId} [delete]
