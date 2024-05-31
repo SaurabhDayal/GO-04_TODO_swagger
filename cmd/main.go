@@ -32,7 +32,7 @@ func main() {
 		"local",
 		"local",
 		database.SSLModeDisable); err != nil {
-		log.Fatal("Failed to initialize and migrate database with error: %+v", err)
+		log.Fatal("failed to initialize and migrate database with error: %+v", err)
 	}
 	fmt.Println("migration successful!!")
 
