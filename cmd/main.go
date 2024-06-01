@@ -5,7 +5,6 @@ import (
 	"04_todo_swagger/handlers"
 	"fmt"
 	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
@@ -25,10 +24,6 @@ import (
 func main() {
 	// Initialize the Chi router
 	r := chi.NewRouter()
-
-	// Use middleware
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
 
 	// Define routes for CRUD operations
 	r.Post("/task", handlers.CreateTask)

@@ -6,8 +6,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/go-chi/chi"
 )
 
 // ReadTask godoc
@@ -22,8 +23,7 @@ import (
 // @Router /task/{taskId} [get]
 func ReadTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	vars := mux.Vars(r)
-	id := vars["taskId"]
+	id := chi.URLParam(r, "taskId")
 	task, err := dbHelper.FindTasksById(id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -88,8 +88,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 // @Router /task/{taskId} [put]
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	vars := mux.Vars(r)
-	id := vars["taskId"]
+	id := chi.URLParam(r, "taskId")
 	var task models.Task
 	json.NewDecoder(r.Body).Decode(&task)
 	response, err := dbHelper.UpdateTaskById(task, id)
@@ -114,8 +113,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 // @Router /task/{taskId} [delete]
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	vars := mux.Vars(r)
-	id := vars["taskId"]
+	id := chi.URLParam(r, "taskId")
 	err := dbHelper.DeleteTaskById(id)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		w.WriteHeader(http.StatusInternalServerError)
