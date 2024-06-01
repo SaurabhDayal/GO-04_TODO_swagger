@@ -2,6 +2,7 @@ package main
 
 import (
 	"04_todo_swagger/database"
+	_ "04_todo_swagger/docs" // Import your generated docs
 	"04_todo_swagger/handlers"
 	"fmt"
 	"github.com/go-chi/chi"
