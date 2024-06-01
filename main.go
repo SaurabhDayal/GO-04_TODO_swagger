@@ -4,7 +4,8 @@ import (
 	"04_todo_swagger/database"
 	"04_todo_swagger/handlers"
 	"fmt"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
@@ -14,29 +15,30 @@ import (
 // @version 1.0
 // @description This is a sample server.
 // @termsOfService http://swagger.io/terms/
-
 // @contact.name API Support
 // @contact.url http://www.swagger.io/support
 // @contact.email support@swagger.io
-
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
 // @host localhost:8080
 // @BasePath /api/v1
 func main() {
-	// Initialize the Gorilla Mux router
-	r := mux.NewRouter()
+	// Initialize the Chi router
+	r := chi.NewRouter()
+
+	// Use middleware
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
 	// Define routes for CRUD operations
-	r.HandleFunc("/task", handlers.CreateTask).Methods("POST")
-	r.HandleFunc("/task", handlers.ReadAllTask).Methods("GET")
-	r.HandleFunc("/task/{taskId}", handlers.ReadTask).Methods("GET")
-	r.HandleFunc("/task/{taskId}", handlers.UpdateTask).Methods("PUT")
-	r.HandleFunc("/task/{taskId}", handlers.DeleteTask).Methods("DELETE")
+	r.Post("/task", handlers.CreateTask)
+	r.Get("/task", handlers.ReadAllTask)
+	r.Get("/task/{taskId}", handlers.ReadTask)
+	r.Put("/task/{taskId}", handlers.UpdateTask)
+	r.Delete("/task/{taskId}", handlers.DeleteTask)
 
 	// Serve Swagger UI
-	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
+	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"), // URL to API definition
 	))
 
