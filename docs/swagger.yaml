@@ -1,0 +1,152 @@
+basePath: /api/v1
+definitions:
+  models.Task:
+    properties:
+      archivedAt:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      pendingAt:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Your Project API
+  version: "1.0"
+paths:
+  /task:
+    get:
+      description: Get all tasks
+      operationId: read-all-task
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+        "204":
+          description: No content
+          schema:
+            type: string
+      summary: Read all tasks
+    post:
+      consumes:
+      - application/json
+      description: Create a new task
+      operationId: create-task
+      parameters:
+      - description: Task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a task
+  /task/{taskId}:
+    delete:
+      description: Delete an existing task
+      operationId: delete-task
+      parameters:
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "204":
+          description: No content
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a task
+    get:
+      description: Get a task by ID
+      operationId: read-task
+      parameters:
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+        "204":
+          description: No content
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Read a single task
+    put:
+      consumes:
+      - application/json
+      description: Update an existing task
+      operationId: update-task
+      parameters:
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: Updated task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+        "204":
+          description: No content
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a task
+swagger: "2.0"
